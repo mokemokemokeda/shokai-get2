@@ -1,6 +1,6 @@
+import csv
 import os
 import requests
-import csv
 
 # GitHub Secrets から BEARER_TOKEN を取得
 BEARER_TOKEN = os.getenv("TWITTER_BEARER_TOKEN")
@@ -10,27 +10,22 @@ if not BEARER_TOKEN:
     print("Error: BEARER_TOKEN is missing. Check your GitHub Secrets settings.")
     exit(1)
 
-# CSVファイルのパス（GitHubリポジトリのルートに `usernames.csv` を置く想定）
-CSV_FILE = "usernames.csv"
+# CSVファイルからユーザー名を読み込む
+with open("usernames.csv", mode="r", encoding="utf-8-sig") as file:
+    reader = csv.reader(file)
+    for row in reader:
+        username = row[0].strip()  # スクリーンネームを取得し、余計な空白を取り除く
+        print(f"Fetching bio for {username}")
 
-# APIリクエストのヘッダー
-headers = {
-    "Authorization": f"Bearer {BEARER_TOKEN}",
-}
+        # Twitter API のエンドポイント（自己紹介文を取得）
+        url = f"https://api.twitter.com/2/users/by/username/{username}?user.fields=description"
 
-# CSVを読み込んで処理
-try:
-    with open(CSV_FILE, "r", encoding="utf-8") as file:
-        reader = csv.reader(file)
-        for row in reader:
-            if not row:  # 空行はスキップ
-                continue
+        # APIリクエストのヘッダー
+        headers = {
+            "Authorization": f"Bearer {BEARER_TOKEN}",
+        }
 
-            username = row[0].strip()  # ユーザー名を取得
-
-            # Twitter API のエンドポイント（自己紹介文を取得）
-            url = f"https://api.twitter.com/2/users/by/username/{username}?user.fields=description"
-
+        try:
             response = requests.get(url, headers=headers)
             response_json = response.json()
 
@@ -42,5 +37,5 @@ try:
                 print(f"Error: HTTP {response.status_code} for {username}")
                 print("Response:", response_json)  # エラーメッセージを表示
 
-except Exception as e:
-    print("Error:", str(e))  # 例外の詳細を表示
+        except Exception as e:
+            print(f"Error for {username}: {str(e)}")  # 例外の詳細を表示
