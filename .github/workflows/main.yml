@@ -1,0 +1,27 @@
+name: Fetch Twitter Bio
+
+on:
+  schedule:
+    - cron: "* * 1 * *"
+  workflow_dispatch:  # 手動実行も可能
+
+jobs:
+  fetch_bio:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: リポジトリをチェックアウト
+        uses: actions/checkout@v4
+
+      - name: Pythonをセットアップ
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: 必要なパッケージをインストール
+        run: pip install requests
+
+      - name: Twitter Bio を取得
+        env:
+          TWITTER_BEARER_TOKEN: ${{ secrets.TWITTER_BEARER_TOKEN }}
+        run: python shutoku.py
