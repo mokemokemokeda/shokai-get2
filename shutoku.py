@@ -11,13 +11,16 @@ if not BEARER_TOKEN:
     print("Error: BEARER_TOKEN is missing. Check your GitHub Secrets settings.")
     exit(1)
 
-# CSVファイルからユーザー名を読み込む
+# CSVファイルからユーザー名をリストとして読み込む
 with open("usernames.csv", mode="r", encoding="utf-8-sig") as file:
     reader = csv.reader(file)
-    counter = 0  # 3人ごとに待機時間を挟むためのカウンター
+    usernames = [row[0].strip() for row in reader]  # 全ユーザー名をリストに格納
 
-    for row in reader:
-        username = row[0].strip()  # スクリーンネームを取得し、余計な空白を取り除く
+# 3人ずつ処理する
+for i in range(0, len(usernames), 3):
+    batch = usernames[i:i+3]  # 3人ずつのグループを作成
+
+    for username in batch:
         print(f"Fetching bio for {username}")
 
         # Twitter API のエンドポイント（自己紹介文を取得）
@@ -43,10 +46,9 @@ with open("usernames.csv", mode="r", encoding="utf-8-sig") as file:
         except Exception as e:
             print(f"Error for {username}: {str(e)}")  # 例外の詳細を表示
 
-        counter += 1
+    # 3人処理した後、まだ処理が残っている場合は30分待機
+    if i + 3 < len(usernames):
+        print("Waiting for 30 minutes before fetching the next batch...")
+        time.sleep(1800)  # 1800秒 = 30分
 
-        # 3人読み込んだら30分待機
-        if counter == 3:
-            print("Waiting for 30 minutes before fetching the next batch...")
-            time.sleep(1800)  # 1800秒 = 30分
-            counter = 0  # カウンターをリセット
+print("All users processed. Script finished.")
