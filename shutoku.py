@@ -49,6 +49,6 @@ for i in range(0, len(usernames), 3):
     # 3人処理した後、まだ処理が残っている場合は30分待機
     if i + 3 < len(usernames):
         print("Waiting for 30 minutes before fetching the next batch...")
-        time.sleep(1800)  # 1800秒 = 30分
+        time.sleep(10)  # 1800秒 = 30分
 
 print("All users processed. Script finished.")
