@@ -23,5 +23,5 @@ jobs:
 
       - name: Twitter Bio を取得
         env:
-          TWITTER_BEARER_TOKEN2: ${{ secrets.TWITTER_BEARER_TOKEN }}
+          TWITTER_BEARER_TOKEN3: ${{ secrets.TWITTER_BEARER_TOKEN }}
         run: python shutoku.py
