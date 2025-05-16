@@ -4,7 +4,7 @@ import requests
 import time
 
 # GitHub Secrets から BEARER_TOKEN を取得
-BEARER_TOKEN = os.getenv("TWITTER_BEARER_TOKEN")
+BEARER_TOKEN = os.getenv("TWITTER_BEARER_TOKEN2")
 
 # BEARER_TOKEN がない場合はエラー
 if not BEARER_TOKEN:
